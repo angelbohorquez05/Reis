@@ -1,0 +1,1196 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
+<title>REIS — Amsterdam</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link href="https://fonts.googleapis.com/css2?family=Playfair+Display:ital,wght@0,700;0,900;1,400&family=DM+Sans:opsz,wght@9..40,300;9..40,400;9..40,500;9..40,600&display=swap" rel="stylesheet">
+<style>
+:root {
+  --navy:   #003049;
+  --red:    #D62828;
+  --orange: #F77F00;
+  --yellow: #FCBF49;
+  --cream:  #FFFAF3;
+  --white:  #FFFFFF;
+  --muted:  #8a8f9a;
+  --border: rgba(0,48,73,0.09);
+  --shadow-sm: 0 1px 6px rgba(0,48,73,0.07);
+  --shadow:    0 4px 20px rgba(0,48,73,0.11);
+  --shadow-lg: 0 10px 40px rgba(0,48,73,0.16);
+  --r: 14px;
+}
+
+*, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+
+html { -webkit-tap-highlight-color: transparent; }
+
+body {
+  font-family: 'DM Sans', sans-serif;
+  background: var(--cream);
+  color: var(--navy);
+  min-height: 100vh;
+  max-width: 430px;
+  margin: 0 auto;
+  position: relative;
+  overflow-x: hidden;
+}
+
+/* ── TOP HEADER ── */
+.top-bar {
+  background: var(--navy);
+  padding: 52px 22px 0;
+  position: relative;
+  overflow: hidden;
+}
+.top-bar::before {
+  content: '';
+  position: absolute;
+  top: -80px; right: -50px;
+  width: 220px; height: 220px;
+  background: radial-gradient(circle, rgba(252,191,73,0.2) 0%, transparent 70%);
+  pointer-events: none;
+}
+.top-bar::after {
+  content: '';
+  position: absolute;
+  bottom: 20px; left: -30px;
+  width: 150px; height: 150px;
+  background: radial-gradient(circle, rgba(247,127,0,0.12) 0%, transparent 70%);
+  pointer-events: none;
+}
+
+.top-bar-inner {
+  position: relative;
+  z-index: 1;
+}
+
+.app-label {
+  font-size: 0.62rem;
+  letter-spacing: 0.18em;
+  text-transform: uppercase;
+  color: rgba(255,255,255,0.4);
+  font-weight: 500;
+  margin-bottom: 4px;
+}
+.app-title {
+  font-family: 'Playfair Display', serif;
+  font-size: 2.6rem;
+  font-weight: 900;
+  color: white;
+  line-height: 1;
+  letter-spacing: -0.02em;
+}
+.app-title span { color: var(--yellow); }
+.app-location {
+  font-size: 0.78rem;
+  color: rgba(255,255,255,0.45);
+  margin-top: 5px;
+  font-weight: 300;
+  letter-spacing: 0.04em;
+}
+
+/* Budget summary strip */
+.budget-strip {
+  margin-top: 18px;
+  background: rgba(255,255,255,0.06);
+  border: 1px solid rgba(255,255,255,0.1);
+  border-radius: 12px 12px 0 0;
+  padding: 14px 18px;
+  display: flex;
+  align-items: flex-start;
+  justify-content: space-between;
+  gap: 12px;
+}
+.budget-main-label {
+  font-size: 0.62rem;
+  text-transform: uppercase;
+  letter-spacing: 0.12em;
+  color: rgba(255,255,255,0.4);
+  font-weight: 600;
+  margin-bottom: 2px;
+}
+.budget-main-amount {
+  font-family: 'Playfair Display', serif;
+  font-size: 1.6rem;
+  font-weight: 700;
+  color: var(--yellow);
+  line-height: 1;
+}
+.budget-set-btn {
+  background: rgba(252,191,73,0.15);
+  border: 1px solid rgba(252,191,73,0.3);
+  color: var(--yellow);
+  font-family: 'DM Sans', sans-serif;
+  font-size: 0.72rem;
+  font-weight: 600;
+  padding: 6px 12px;
+  border-radius: 8px;
+  cursor: pointer;
+  white-space: nowrap;
+  flex-shrink: 0;
+  margin-top: 4px;
+}
+.budget-bar-wrap {
+  margin-top: 10px;
+  display: flex;
+  gap: 8px;
+  align-items: center;
+}
+.budget-bar-track {
+  flex: 1;
+  height: 4px;
+  background: rgba(255,255,255,0.1);
+  border-radius: 4px;
+  overflow: hidden;
+}
+.budget-bar-fill {
+  height: 100%;
+  border-radius: 4px;
+  transition: width 0.5s ease;
+  background: linear-gradient(90deg, var(--yellow), var(--orange));
+}
+.budget-bar-fill.over { background: var(--red); }
+.budget-pct {
+  font-size: 0.68rem;
+  color: rgba(255,255,255,0.45);
+  font-weight: 500;
+  flex-shrink: 0;
+}
+
+/* ── DAY TABS ── */
+.day-tabs-wrap {
+  background: var(--navy);
+  padding: 0 0 0;
+  position: sticky;
+  top: 0;
+  z-index: 50;
+}
+.day-tabs {
+  display: flex;
+  overflow-x: auto;
+  gap: 0;
+  scrollbar-width: none;
+  border-top: 1px solid rgba(255,255,255,0.07);
+}
+.day-tabs::-webkit-scrollbar { display: none; }
+.day-tab {
+  flex-shrink: 0;
+  padding: 12px 16px 10px;
+  cursor: pointer;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 2px;
+  border-bottom: 3px solid transparent;
+  transition: all 0.15s;
+  min-width: 52px;
+}
+.day-tab.active {
+  border-bottom-color: var(--yellow);
+}
+.day-tab-num {
+  font-family: 'Playfair Display', serif;
+  font-size: 1rem;
+  font-weight: 700;
+  color: rgba(255,255,255,0.35);
+  line-height: 1;
+}
+.day-tab.active .day-tab-num { color: var(--yellow); }
+.day-tab-label {
+  font-size: 0.55rem;
+  text-transform: uppercase;
+  letter-spacing: 0.08em;
+  color: rgba(255,255,255,0.25);
+  font-weight: 600;
+}
+.day-tab.active .day-tab-label { color: rgba(255,255,255,0.55); }
+.day-tab-dot {
+  width: 4px; height: 4px;
+  border-radius: 50%;
+  background: rgba(255,255,255,0.15);
+  margin-top: 2px;
+}
+.day-tab.has-entries .day-tab-dot { background: var(--orange); }
+
+/* ── MAIN SCROLL AREA ── */
+main {
+  padding: 16px 16px 100px;
+}
+
+/* Day header */
+.day-header {
+  display: flex;
+  align-items: flex-start;
+  justify-content: space-between;
+  margin-bottom: 14px;
+  padding: 0 2px;
+}
+.day-header-left {}
+.day-title {
+  font-family: 'Playfair Display', serif;
+  font-size: 1.5rem;
+  font-weight: 700;
+  color: var(--navy);
+  line-height: 1;
+}
+.day-date {
+  font-size: 0.72rem;
+  color: var(--muted);
+  margin-top: 3px;
+  font-weight: 400;
+}
+.day-spend-badge {
+  background: var(--white);
+  border: 1.5px solid var(--border);
+  border-radius: 10px;
+  padding: 8px 14px;
+  text-align: right;
+  box-shadow: var(--shadow-sm);
+}
+.day-spend-label {
+  font-size: 0.58rem;
+  text-transform: uppercase;
+  letter-spacing: 0.1em;
+  color: var(--muted);
+  font-weight: 600;
+}
+.day-spend-amount {
+  font-family: 'Playfair Display', serif;
+  font-size: 1.1rem;
+  font-weight: 700;
+  color: var(--navy);
+  line-height: 1.1;
+}
+.day-spend-amount.over { color: var(--red); }
+.day-budget-bar {
+  height: 3px;
+  background: var(--border);
+  border-radius: 3px;
+  overflow: hidden;
+  margin-top: 5px;
+}
+.day-budget-fill {
+  height: 100%;
+  border-radius: 3px;
+  background: linear-gradient(90deg, var(--yellow), var(--orange));
+  transition: width 0.4s ease;
+}
+.day-budget-fill.over { background: var(--red); }
+
+/* Category spend pills */
+.cat-spend-row {
+  display: flex;
+  gap: 6px;
+  flex-wrap: nowrap;
+  overflow-x: auto;
+  scrollbar-width: none;
+  margin-bottom: 16px;
+  padding-bottom: 2px;
+}
+.cat-spend-row::-webkit-scrollbar { display: none; }
+.cat-spend-pill {
+  flex-shrink: 0;
+  background: var(--white);
+  border: 1.5px solid var(--border);
+  border-radius: 8px;
+  padding: 5px 10px;
+  font-size: 0.7rem;
+  color: var(--navy);
+  font-weight: 500;
+  white-space: nowrap;
+  box-shadow: var(--shadow-sm);
+}
+.cat-spend-pill span {
+  color: var(--muted);
+  font-weight: 400;
+  font-size: 0.65rem;
+}
+
+/* Entries */
+#entries-list { display: flex; flex-direction: column; gap: 8px; }
+
+.entry-card {
+  background: var(--white);
+  border-radius: var(--r);
+  box-shadow: var(--shadow-sm);
+  overflow: hidden;
+  border: 1.5px solid var(--border);
+  transition: box-shadow 0.2s, border-color 0.2s;
+}
+.entry-card.open {
+  border-color: rgba(247,127,0,0.35);
+  box-shadow: var(--shadow);
+}
+
+.entry-header {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  padding: 13px 15px;
+  cursor: pointer;
+  user-select: none;
+}
+
+.entry-cat-bar {
+  width: 3px;
+  height: 36px;
+  border-radius: 3px;
+  flex-shrink: 0;
+}
+
+.entry-info { flex: 1; min-width: 0; }
+.entry-name {
+  font-size: 0.88rem;
+  font-weight: 600;
+  color: var(--navy);
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  line-height: 1.2;
+}
+.entry-meta {
+  display: flex;
+  gap: 8px;
+  margin-top: 3px;
+  flex-wrap: wrap;
+}
+.entry-meta-item {
+  font-size: 0.65rem;
+  color: var(--muted);
+  font-weight: 400;
+}
+
+.entry-right {
+  display: flex;
+  flex-direction: column;
+  align-items: flex-end;
+  gap: 3px;
+  flex-shrink: 0;
+}
+.entry-amount {
+  font-family: 'Playfair Display', serif;
+  font-size: 0.95rem;
+  font-weight: 700;
+  color: var(--navy);
+}
+.entry-cat-badge {
+  font-size: 0.58rem;
+  text-transform: uppercase;
+  letter-spacing: 0.07em;
+  font-weight: 700;
+  padding: 2px 7px;
+  border-radius: 4px;
+}
+.chevron {
+  font-size: 0.6rem;
+  color: var(--muted);
+  transition: transform 0.2s;
+}
+.entry-card.open .chevron { transform: rotate(180deg); }
+
+/* Card body */
+.entry-body {
+  display: none;
+  padding: 0 15px 15px;
+  border-top: 1px solid var(--border);
+}
+.entry-card.open .entry-body { display: block; }
+
+.form-section { margin-top: 12px; }
+.form-label {
+  font-size: 0.62rem;
+  text-transform: uppercase;
+  letter-spacing: 0.1em;
+  font-weight: 700;
+  color: var(--muted);
+  margin-bottom: 6px;
+  display: block;
+}
+.form-input {
+  width: 100%;
+  padding: 10px 12px;
+  border: 1.5px solid var(--border);
+  border-radius: 9px;
+  font-family: 'DM Sans', sans-serif;
+  font-size: 0.85rem;
+  color: var(--navy);
+  background: var(--cream);
+  outline: none;
+  transition: border-color 0.15s;
+  -webkit-appearance: none;
+}
+.form-input:focus { border-color: var(--orange); background: white; }
+
+.form-row-2 {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: 10px;
+}
+
+.status-pills {
+  display: flex;
+  gap: 6px;
+}
+.status-pill {
+  flex: 1;
+  padding: 9px 6px;
+  border-radius: 9px;
+  border: 1.5px solid var(--border);
+  background: var(--cream);
+  font-family: 'DM Sans', sans-serif;
+  font-size: 0.72rem;
+  font-weight: 600;
+  color: var(--muted);
+  cursor: pointer;
+  text-align: center;
+  transition: all 0.15s;
+}
+.status-pill.active-ns { background: rgba(214,40,40,0.07); border-color: rgba(214,40,40,0.3); color: var(--red); }
+.status-pill.active-ip { background: rgba(247,127,0,0.09); border-color: rgba(247,127,0,0.35); color: var(--orange); }
+.status-pill.active-done { background: rgba(0,48,73,0.07); border-color: rgba(0,48,73,0.25); color: var(--navy); }
+
+textarea.form-input {
+  resize: vertical;
+  min-height: 72px;
+  line-height: 1.5;
+}
+
+.cat-select-grid {
+  display: grid;
+  grid-template-columns: repeat(4, 1fr);
+  gap: 5px;
+}
+.cat-sel-btn {
+  padding: 7px 4px;
+  border-radius: 8px;
+  border: 1.5px solid var(--border);
+  background: var(--cream);
+  font-family: 'DM Sans', sans-serif;
+  font-size: 0.62rem;
+  font-weight: 600;
+  color: var(--muted);
+  cursor: pointer;
+  text-align: center;
+  transition: all 0.12s;
+  line-height: 1.3;
+}
+.cat-sel-btn.selected { color: white; border-color: transparent; }
+
+.entry-footer {
+  display: flex;
+  gap: 8px;
+  margin-top: 14px;
+  align-items: center;
+}
+.btn-del {
+  background: none;
+  border: none;
+  font-size: 0.72rem;
+  color: var(--muted);
+  cursor: pointer;
+  font-family: 'DM Sans', sans-serif;
+  padding: 8px 0;
+}
+.btn-del:active { color: var(--red); }
+.btn-save {
+  flex: 1;
+  padding: 11px;
+  background: var(--navy);
+  color: white;
+  border: none;
+  border-radius: 9px;
+  font-family: 'DM Sans', sans-serif;
+  font-size: 0.82rem;
+  font-weight: 700;
+  cursor: pointer;
+  transition: background 0.15s;
+  letter-spacing: 0.03em;
+}
+.btn-save:active { background: var(--orange); }
+.btn-save.saved { background: #2d8a4e; }
+
+/* ── FAB ── */
+.fab {
+  position: fixed;
+  bottom: 24px;
+  right: 20px;
+  width: 54px;
+  height: 54px;
+  border-radius: 50%;
+  background: var(--orange);
+  color: white;
+  font-size: 1.5rem;
+  border: none;
+  cursor: pointer;
+  display: flex; align-items: center; justify-content: center;
+  box-shadow: 0 6px 24px rgba(247,127,0,0.4);
+  z-index: 40;
+  transition: transform 0.15s, background 0.15s;
+}
+.fab:active { transform: scale(0.92); }
+
+/* ── BOTTOM TOOLBAR ── */
+.bottom-bar {
+  position: fixed;
+  bottom: 0; left: 50%;
+  transform: translateX(-50%);
+  width: 100%;
+  max-width: 430px;
+  background: var(--white);
+  border-top: 1px solid var(--border);
+  display: flex;
+  padding: 8px 16px 16px;
+  gap: 8px;
+  z-index: 39;
+}
+.btn-bar {
+  flex: 1;
+  padding: 9px;
+  border-radius: 9px;
+  font-family: 'DM Sans', sans-serif;
+  font-size: 0.72rem;
+  font-weight: 600;
+  cursor: pointer;
+  border: 1.5px solid var(--border);
+  background: var(--cream);
+  color: var(--navy);
+  transition: all 0.15s;
+}
+.btn-bar:active { background: var(--navy); color: white; }
+
+/* ── MODAL ── */
+.modal-overlay {
+  display: none;
+  position: fixed;
+  inset: 0;
+  background: rgba(0,48,73,0.5);
+  z-index: 100;
+  align-items: flex-end;
+  justify-content: center;
+  backdrop-filter: blur(6px);
+}
+.modal-overlay.open { display: flex; }
+.modal-sheet {
+  background: var(--white);
+  border-radius: 22px 22px 0 0;
+  padding: 20px 20px 40px;
+  width: 100%;
+  max-width: 430px;
+  box-shadow: var(--shadow-lg);
+  animation: slideUp 0.25s ease;
+}
+@keyframes slideUp {
+  from { transform: translateY(60px); opacity: 0; }
+  to   { transform: translateY(0); opacity: 1; }
+}
+.modal-handle {
+  width: 36px; height: 4px;
+  background: var(--border);
+  border-radius: 4px;
+  margin: 0 auto 18px;
+}
+.modal-title {
+  font-family: 'Playfair Display', serif;
+  font-size: 1.3rem;
+  font-weight: 700;
+  color: var(--navy);
+  margin-bottom: 16px;
+}
+.modal .form-section { margin-top: 12px; }
+.modal-actions {
+  display: flex;
+  gap: 10px;
+  margin-top: 20px;
+}
+.btn-cancel {
+  flex: 1;
+  padding: 11px;
+  border-radius: 9px;
+  border: 1.5px solid var(--border);
+  background: var(--cream);
+  font-family: 'DM Sans', sans-serif;
+  font-size: 0.82rem;
+  font-weight: 600;
+  cursor: pointer;
+  color: var(--muted);
+}
+.btn-create {
+  flex: 2;
+  padding: 11px;
+  border-radius: 9px;
+  background: var(--navy);
+  color: white;
+  border: none;
+  font-family: 'DM Sans', sans-serif;
+  font-size: 0.82rem;
+  font-weight: 700;
+  cursor: pointer;
+}
+.btn-create:active { background: var(--orange); }
+
+/* Budget modal */
+.budget-input-wrap {
+  position: relative;
+  margin-top: 8px;
+}
+.budget-currency {
+  position: absolute;
+  left: 14px;
+  top: 50%;
+  transform: translateY(-50%);
+  font-family: 'Playfair Display', serif;
+  font-size: 1rem;
+  font-weight: 700;
+  color: var(--muted);
+}
+.budget-big-input {
+  width: 100%;
+  padding: 12px 14px 12px 32px;
+  border: 1.5px solid var(--border);
+  border-radius: 11px;
+  font-family: 'Playfair Display', serif;
+  font-size: 1.5rem;
+  font-weight: 700;
+  color: var(--navy);
+  background: var(--cream);
+  outline: none;
+}
+.budget-big-input:focus { border-color: var(--orange); }
+
+.empty-day {
+  text-align: center;
+  padding: 48px 20px;
+  color: var(--muted);
+}
+.empty-day-title {
+  font-family: 'Playfair Display', serif;
+  font-size: 1rem;
+  font-style: italic;
+  margin-bottom: 6px;
+  color: var(--navy);
+  opacity: 0.45;
+}
+.empty-day-sub { font-size: 0.78rem; }
+</style>
+</head>
+<body>
+
+<!-- TOP HEADER -->
+<div class="top-bar">
+  <div class="top-bar-inner">
+    <div class="app-label">Journey Tracker</div>
+    <div class="app-title">REIS <span>//</span></div>
+    <div class="app-location">Amsterdam, Netherlands</div>
+
+    <div class="budget-strip">
+      <div>
+        <div class="budget-main-label">Total spent</div>
+        <div class="budget-main-amount" id="total-spent">€0</div>
+        <div class="budget-bar-wrap">
+          <div class="budget-bar-track">
+            <div class="budget-bar-fill" id="total-bar" style="width:0%"></div>
+          </div>
+          <div class="budget-pct" id="total-pct">of €<span id="budget-display">—</span></div>
+        </div>
+      </div>
+      <button class="budget-set-btn" onclick="openBudgetModal()">Set budget</button>
+    </div>
+  </div>
+</div>
+
+<!-- DAY TABS -->
+<div class="day-tabs-wrap">
+  <div class="day-tabs" id="day-tabs"></div>
+</div>
+
+<!-- MAIN -->
+<main>
+  <div class="day-header">
+    <div class="day-header-left">
+      <div class="day-title" id="day-title">Day 1</div>
+      <div class="day-date" id="day-date"></div>
+    </div>
+    <div class="day-spend-badge">
+      <div class="day-spend-label">Day spend</div>
+      <div class="day-spend-amount" id="day-spend">€0</div>
+      <div class="day-budget-bar">
+        <div class="day-budget-fill" id="day-bar" style="width:0%"></div>
+      </div>
+    </div>
+  </div>
+
+  <div class="cat-spend-row" id="cat-spend-row"></div>
+
+  <div id="entries-list"></div>
+</main>
+
+<!-- FAB -->
+<button class="fab" onclick="openAddModal()">+</button>
+
+<!-- BOTTOM BAR -->
+<div class="bottom-bar">
+  <button class="btn-bar" onclick="exportData()">Export JSON</button>
+  <label class="btn-bar" style="cursor:pointer;text-align:center;display:flex;align-items:center;justify-content:center;">
+    Import JSON
+    <input type="file" accept=".json" style="display:none" onchange="importData(event)">
+  </label>
+</div>
+
+<!-- ADD ENTRY MODAL -->
+<div class="modal-overlay" id="add-modal">
+  <div class="modal-sheet">
+    <div class="modal-handle"></div>
+    <div class="modal-title">New Entry</div>
+
+    <div class="form-section">
+      <label class="form-label">Name</label>
+      <input type="text" class="form-input" id="new-name" placeholder="e.g. Rijksmuseum">
+    </div>
+
+    <div class="form-section">
+      <label class="form-label">Category</label>
+      <div class="cat-select-grid" id="modal-cat-grid"></div>
+    </div>
+
+    <div class="modal-actions">
+      <button class="btn-cancel" onclick="closeAddModal()">Cancel</button>
+      <button class="btn-create" onclick="createEntry()">Add Entry</button>
+    </div>
+  </div>
+</div>
+
+<!-- BUDGET MODAL -->
+<div class="modal-overlay" id="budget-modal">
+  <div class="modal-sheet">
+    <div class="modal-handle"></div>
+    <div class="modal-title">Total Trip Budget</div>
+    <div class="form-section">
+      <label class="form-label">How much for all 8 days?</label>
+      <div class="budget-input-wrap">
+        <span class="budget-currency">€</span>
+        <input type="number" class="budget-big-input" id="budget-input" placeholder="0" min="0" step="10">
+      </div>
+      <div style="font-size:0.7rem;color:var(--muted);margin-top:8px;" id="daily-split-preview"></div>
+    </div>
+    <div class="modal-actions">
+      <button class="btn-cancel" onclick="closeBudgetModal()">Cancel</button>
+      <button class="btn-create" onclick="saveBudget()">Save</button>
+    </div>
+  </div>
+</div>
+
+<script>
+// ── CATEGORIES ────────────────────────────────────────────────────────────────
+const CATS = [
+  { id: 'viaje',       label: 'Viaje',        color: '#003049' },
+  { id: 'comida',      label: 'Comida',       color: '#D62828' },
+  { id: 'salidas',     label: 'Salidas',      color: '#F77F00' },
+  { id: 'diversion',   label: 'Diversion',    color: '#FCBF49', dark: true },
+  { id: 'personas',    label: 'Personas',     color: '#6B4CA8' },
+  { id: 'alojamiento', label: 'Alojamiento',  color: '#2D8A4E' },
+  { id: 'compras',     label: 'Compras',      color: '#C0539A' },
+  { id: 'transporte',  label: 'Transporte',   color: '#1A7BB0' },
+];
+
+const DAYS = 8;
+// Trip start date — user can change this. Defaults to today.
+function getTripStart() {
+  return state.tripStart || new Date().toISOString().slice(0,10);
+}
+function getDayDate(dayNum) {
+  const start = new Date(getTripStart() + 'T00:00:00');
+  start.setDate(start.getDate() + (dayNum - 1));
+  return start;
+}
+function formatDate(d) {
+  return d.toLocaleDateString('en-US', { weekday:'short', month:'short', day:'numeric' });
+}
+
+// ── STATE ─────────────────────────────────────────────────────────────────────
+let state = { entries: [], budget: 0, tripStart: null };
+let activeDay = 1;
+let newEntryCat = CATS[0].id;
+
+function loadState() {
+  const s = localStorage.getItem('reis_v3');
+  if (s) { try { state = JSON.parse(s); } catch(e){} }
+  if (!state.entries) state.entries = [];
+  if (!state.budget) state.budget = 0;
+}
+function saveState() { localStorage.setItem('reis_v3', JSON.stringify(state)); }
+
+// ── HELPERS ───────────────────────────────────────────────────────────────────
+function getCat(id) { return CATS.find(c => c.id === id) || CATS[0]; }
+function uid() { return Date.now().toString(36) + Math.random().toString(36).slice(2,5); }
+
+function dayEntries(day) { return state.entries.filter(e => e.day === day); }
+function daySpend(day) { return dayEntries(day).reduce((s,e) => s + (parseFloat(e.amount)||0), 0); }
+function totalSpend() { return state.entries.reduce((s,e) => s + (parseFloat(e.amount)||0), 0); }
+function dailyBudget() { return state.budget ? state.budget / DAYS : 0; }
+
+// ── RENDER ────────────────────────────────────────────────────────────────────
+function render() {
+  renderTopBudget();
+  renderDayTabs();
+  renderDayHeader();
+  renderCatSpend();
+  renderEntries();
+  saveState();
+}
+
+function renderTopBudget() {
+  const spent = totalSpend();
+  document.getElementById('total-spent').textContent = '€' + spent.toFixed(2);
+  const bgt = state.budget;
+  document.getElementById('budget-display').textContent = bgt ? bgt.toFixed(0) : '—';
+  if (bgt) {
+    const pct = Math.min((spent / bgt) * 100, 100);
+    const bar = document.getElementById('total-bar');
+    bar.style.width = pct + '%';
+    bar.className = 'budget-bar-fill' + (spent > bgt ? ' over' : '');
+    document.getElementById('total-pct').innerHTML = `of €<span id="budget-display">${bgt.toFixed(0)}</span>`;
+  } else {
+    document.getElementById('total-bar').style.width = '0%';
+    document.getElementById('total-pct').innerHTML = `of €<span id="budget-display">—</span>`;
+  }
+}
+
+function renderDayTabs() {
+  const wrap = document.getElementById('day-tabs');
+  wrap.innerHTML = Array.from({length: DAYS}, (_,i) => {
+    const d = i + 1;
+    const hasEntries = dayEntries(d).length > 0;
+    const date = getDayDate(d);
+    const label = date.toLocaleDateString('en-US',{weekday:'short'}).toUpperCase();
+    return `<div class="day-tab${activeDay===d?' active':''}${hasEntries?' has-entries':''}" onclick="switchDay(${d})">
+      <div class="day-tab-num">${d}</div>
+      <div class="day-tab-label">${label}</div>
+      <div class="day-tab-dot"></div>
+    </div>`;
+  }).join('');
+}
+
+function renderDayHeader() {
+  document.getElementById('day-title').textContent = 'Day ' + activeDay;
+  document.getElementById('day-date').textContent = formatDate(getDayDate(activeDay));
+
+  const spent = daySpend(activeDay);
+  const db = dailyBudget();
+  const el = document.getElementById('day-spend');
+  el.textContent = '€' + spent.toFixed(2);
+  el.className = 'day-spend-amount' + (db && spent > db ? ' over' : '');
+
+  const bar = document.getElementById('day-bar');
+  if (db) {
+    bar.style.width = Math.min((spent/db)*100, 100) + '%';
+    bar.className = 'day-budget-fill' + (spent > db ? ' over' : '');
+  } else {
+    bar.style.width = '0%';
+  }
+}
+
+function renderCatSpend() {
+  const row = document.getElementById('cat-spend-row');
+  const entries = dayEntries(activeDay);
+  if (!entries.length) { row.innerHTML = ''; return; }
+
+  // Group by category
+  const bycat = {};
+  entries.forEach(e => {
+    if (!bycat[e.category]) bycat[e.category] = 0;
+    bycat[e.category] += parseFloat(e.amount) || 0;
+  });
+
+  row.innerHTML = Object.entries(bycat).map(([catId, amt]) => {
+    const cat = getCat(catId);
+    if (!amt) return '';
+    return `<div class="cat-spend-pill" style="border-left:3px solid ${cat.color}">
+      ${cat.label} <span>€${amt.toFixed(0)}</span>
+    </div>`;
+  }).join('');
+}
+
+function renderEntries() {
+  const list = document.getElementById('entries-list');
+  const entries = dayEntries(activeDay);
+
+  if (!entries.length) {
+    list.innerHTML = `<div class="empty-day">
+      <div class="empty-day-title">Nothing logged yet</div>
+      <div class="empty-day-sub">Tap + to add your first entry for Day ${activeDay}</div>
+    </div>`;
+    return;
+  }
+
+  // Sort by time if available
+  const sorted = [...entries].sort((a,b) => {
+    if (a.time && b.time) return a.time.localeCompare(b.time);
+    return 0;
+  });
+
+  list.innerHTML = sorted.map(e => renderEntryCard(e)).join('');
+}
+
+function renderEntryCard(e) {
+  const cat = getCat(e.category);
+  const textColor = cat.dark ? '#7a5c00' : 'white';
+  const metaItems = [];
+  if (e.time) metaItems.push(e.time);
+  if (e.place) metaItems.push(e.place);
+  if (e.status && e.status !== 'not_started') {
+    const sl = { in_progress: 'In progress', completed: 'Done', not_started: 'Planned' };
+    metaItems.push(sl[e.status] || '');
+  }
+
+  const catBtns = CATS.map(c => {
+    const sel = e.category === c.id;
+    const tc = c.dark ? '#7a5c00' : 'white';
+    return `<button class="cat-sel-btn${sel?' selected':''}"
+      style="${sel ? `background:${c.color};color:${tc};` : ''}"
+      onclick="setEntryCat(event,'${e.id}','${c.id}')">${c.label}</button>`;
+  }).join('');
+
+  return `<div class="entry-card${e._open?' open':''}" id="card-${e.id}">
+    <div class="entry-header" onclick="toggleEntry('${e.id}')">
+      <div class="entry-cat-bar" style="background:${cat.color}"></div>
+      <div class="entry-info">
+        <div class="entry-name">${e.name || 'Unnamed'}</div>
+        <div class="entry-meta">
+          ${metaItems.map(m => `<span class="entry-meta-item">${m}</span>`).join('')}
+        </div>
+      </div>
+      <div class="entry-right">
+        ${e.amount ? `<div class="entry-amount">€${parseFloat(e.amount).toFixed(2)}</div>` : ''}
+        <div class="entry-cat-badge" style="background:${cat.color};color:${textColor}">${cat.label}</div>
+      </div>
+      <div class="chevron">▼</div>
+    </div>
+    <div class="entry-body">
+      <div class="form-section">
+        <label class="form-label">Status</label>
+        <div class="status-pills">
+          <button class="status-pill${e.status==='not_started'?' active-ns':''}" onclick="setStatus(event,'${e.id}','not_started')">Planned</button>
+          <button class="status-pill${e.status==='in_progress'?' active-ip':''}" onclick="setStatus(event,'${e.id}','in_progress')">Doing</button>
+          <button class="status-pill${e.status==='completed'?' active-done':''}" onclick="setStatus(event,'${e.id}','completed')">Done</button>
+        </div>
+      </div>
+      <div class="form-row-2" style="display:grid;grid-template-columns:1fr 1fr;gap:10px;margin-top:12px;">
+        <div class="form-section" style="margin-top:0">
+          <label class="form-label">Amount (EUR)</label>
+          <input type="number" class="form-input" min="0" step="0.01" placeholder="0.00"
+            value="${e.amount||''}" onchange="setField('${e.id}','amount',this.value)">
+        </div>
+        <div class="form-section" style="margin-top:0">
+          <label class="form-label">Time</label>
+          <input type="time" class="form-input" value="${e.time||''}"
+            onchange="setField('${e.id}','time',this.value)">
+        </div>
+      </div>
+      <div class="form-section">
+        <label class="form-label">Place / Location</label>
+        <input type="text" class="form-input" placeholder="e.g. Jordaan, Leidseplein..."
+          value="${e.place||''}" onchange="setField('${e.id}','place',this.value)">
+      </div>
+      <div class="form-section">
+        <label class="form-label">Category</label>
+        <div class="cat-select-grid">${catBtns}</div>
+      </div>
+      <div class="form-section">
+        <label class="form-label">Notes</label>
+        <textarea class="form-input" placeholder="Details, who was there, thoughts..."
+          onchange="setField('${e.id}','notes',this.value)">${e.notes||''}</textarea>
+      </div>
+      <div class="entry-footer">
+        <button class="btn-del" onclick="deleteEntry('${e.id}')">Delete</button>
+        <button class="btn-save" id="save-${e.id}" onclick="saveEntry('${e.id}')">Save</button>
+      </div>
+    </div>
+  </div>`;
+}
+
+// ── ACTIONS ───────────────────────────────────────────────────────────────────
+function switchDay(d) { activeDay = d; render(); window.scrollTo({top:0,behavior:'smooth'}); }
+
+function toggleEntry(id) {
+  const e = state.entries.find(x => x.id === id);
+  if (e) e._open = !e._open;
+  render();
+}
+
+function setField(id, field, val) {
+  const e = state.entries.find(x => x.id === id);
+  if (e) e[field] = val;
+  saveState();
+  renderTopBudget();
+  renderDayHeader();
+  renderCatSpend();
+  renderDayTabs();
+}
+
+function setStatus(ev, id, status) {
+  ev.stopPropagation();
+  const e = state.entries.find(x => x.id === id);
+  if (e) e.status = status;
+  // update pills locally
+  const card = document.getElementById('card-' + id);
+  if (card) {
+    card.querySelectorAll('.status-pill').forEach(p => {
+      p.className = 'status-pill';
+    });
+    const map = { not_started: 0, in_progress: 1, completed: 2 };
+    const pills = card.querySelectorAll('.status-pill');
+    const classes = ['active-ns','active-ip','active-done'];
+    if (pills[map[status]]) pills[map[status]].className = 'status-pill ' + classes[map[status]];
+  }
+  saveState();
+}
+
+function setEntryCat(ev, id, catId) {
+  ev.stopPropagation();
+  const e = state.entries.find(x => x.id === id);
+  if (e) e.category = catId;
+  saveState();
+  renderEntries();
+  renderCatSpend();
+}
+
+function saveEntry(id) {
+  const card = document.getElementById('card-' + id);
+  const e = state.entries.find(x => x.id === id);
+  if (e && card) {
+    const ta = card.querySelector('textarea');
+    if (ta) e.notes = ta.value;
+    const inputs = card.querySelectorAll('input');
+    inputs.forEach(inp => {
+      if (inp.type === 'number') e.amount = parseFloat(inp.value) || 0;
+      if (inp.type === 'time') e.time = inp.value;
+      if (inp.type === 'text' && inp.placeholder.includes('Jordaan')) e.place = inp.value;
+    });
+    e._open = false;
+  }
+  const btn = document.getElementById('save-' + id);
+  if (btn) { btn.textContent = 'Saved'; btn.className = 'btn-save saved'; }
+  setTimeout(() => render(), 500);
+}
+
+function deleteEntry(id) {
+  state.entries = state.entries.filter(x => x.id !== id);
+  render();
+}
+
+// ── ADD MODAL ─────────────────────────────────────────────────────────────────
+function openAddModal() {
+  newEntryCat = CATS[0].id;
+  document.getElementById('new-name').value = '';
+  const grid = document.getElementById('modal-cat-grid');
+  grid.innerHTML = CATS.map(c => {
+    const sel = c.id === newEntryCat;
+    const tc = c.dark ? '#7a5c00' : 'white';
+    return `<button class="cat-sel-btn${sel?' selected':''}"
+      style="${sel ? `background:${c.color};color:${tc};` : ''}"
+      onclick="selectModalCat('${c.id}',this)">${c.label}</button>`;
+  }).join('');
+  document.getElementById('add-modal').classList.add('open');
+  setTimeout(() => document.getElementById('new-name').focus(), 200);
+}
+function closeAddModal() { document.getElementById('add-modal').classList.remove('open'); }
+
+function selectModalCat(catId, btn) {
+  newEntryCat = catId;
+  const grid = document.getElementById('modal-cat-grid');
+  grid.querySelectorAll('.cat-sel-btn').forEach(b => {
+    b.className = 'cat-sel-btn';
+    b.style = '';
+  });
+  const cat = getCat(catId);
+  const tc = cat.dark ? '#7a5c00' : 'white';
+  btn.className = 'cat-sel-btn selected';
+  btn.style.background = cat.color;
+  btn.style.color = tc;
+}
+
+function createEntry() {
+  const name = document.getElementById('new-name').value.trim();
+  if (!name) { document.getElementById('new-name').focus(); return; }
+  state.entries.push({
+    id: uid(), name,
+    day: activeDay,
+    category: newEntryCat,
+    status: 'not_started',
+    amount: 0,
+    time: '',
+    place: '',
+    notes: '',
+    _open: true,
+    createdAt: new Date().toISOString()
+  });
+  closeAddModal();
+  render();
+}
+
+// ── BUDGET MODAL ──────────────────────────────────────────────────────────────
+function openBudgetModal() {
+  document.getElementById('budget-input').value = state.budget || '';
+  updateDailyPreview();
+  document.getElementById('budget-modal').classList.add('open');
+  setTimeout(() => document.getElementById('budget-input').focus(), 200);
+}
+function closeBudgetModal() { document.getElementById('budget-modal').classList.remove('open'); }
+function updateDailyPreview() {
+  const val = parseFloat(document.getElementById('budget-input').value) || 0;
+  const preview = document.getElementById('daily-split-preview');
+  if (val) {
+    preview.textContent = `€${(val/DAYS).toFixed(2)} per day across ${DAYS} days`;
+  } else {
+    preview.textContent = '';
+  }
+}
+document.addEventListener('DOMContentLoaded', () => {
+  document.getElementById('budget-input').addEventListener('input', updateDailyPreview);
+});
+function saveBudget() {
+  state.budget = parseFloat(document.getElementById('budget-input').value) || 0;
+  closeBudgetModal();
+  render();
+}
+
+// ── EXPORT / IMPORT ───────────────────────────────────────────────────────────
+function exportData() {
+  const blob = new Blob([JSON.stringify(state, null, 2)], { type:'application/json' });
+  const url = URL.createObjectURL(blob);
+  const a = document.createElement('a');
+  a.href = url;
+  a.download = `reis-amsterdam-${new Date().toISOString().slice(0,10)}.json`;
+  a.click();
+  URL.revokeObjectURL(url);
+}
+function importData(ev) {
+  const file = ev.target.files[0];
+  if (!file) return;
+  const reader = new FileReader();
+  reader.onload = e => {
+    try {
+      const d = JSON.parse(e.target.result);
+      if (d.entries) { state = d; render(); }
+      else alert('Invalid file.');
+    } catch { alert('Error reading file.'); }
+  };
+  reader.readAsText(file);
+  ev.target.value = '';
+}
+
+// ── MODAL CLOSE ON BACKDROP ───────────────────────────────────────────────────
+document.getElementById('add-modal').addEventListener('click', function(e){ if(e.target===this) closeAddModal(); });
+document.getElementById('budget-modal').addEventListener('click', function(e){ if(e.target===this) closeBudgetModal(); });
+document.addEventListener('keydown', e => {
+  if (e.key === 'Escape') { closeAddModal(); closeBudgetModal(); }
+});
+
+// ── INIT ──────────────────────────────────────────────────────────────────────
+loadState();
+render();
+</script>
+</body>
+</html>
